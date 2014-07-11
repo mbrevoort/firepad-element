@@ -14,7 +14,7 @@ Element providing basic wrapper around firepad, markdown hardcoded.
 @status alpha
 @homepage http://polymerlabs.github.io/firepad-element
 -->
-<polymer-element name="firepad-element" attributes="location userId readonly">
+<polymer-element name="firepad-element" attributes="location userId readonly firepad">
 
   <template>
     <firebase-element id="fb" location="{{location}}" log></firebase-element>
@@ -22,7 +22,6 @@ Element providing basic wrapper around firepad, markdown hardcoded.
     <link rel="stylesheet" href="/firepad/dist/firepad.css" />
     <link rel="stylesheet" href="firepad-element.css" />
     <div id="editor"></div>
-
   </template>
   <script src="codemirror/lib/codemirror.js"></script>
   <script src="codemirror/mode/markdown/markdown.js"></script>
@@ -39,6 +38,10 @@ Element providing basic wrapper around firepad, markdown hardcoded.
        */
       author: 'Mike Brevoort',
 
+      get value() {
+        return this.firepad.getText();
+      },
+
       domReady: function() {
         var codeMirror = CodeMirror(this.$.editor, {
           mode: 'markdown',
@@ -51,18 +54,20 @@ Element providing basic wrapper around firepad, markdown hardcoded.
           userId: this.userId || tmpUserId
         };
 
-        var firepad = Firepad.fromCodeMirror(this.$.fb.ref, codeMirror, options);
-        console.log(firepad);
+        this.firepad = Firepad.fromCodeMirror(this.$.fb.ref, codeMirror, options);
 
-        firepad.on('ready', function() {
-          if (firepad.isHistoryEmpty()) {
-            firepad.setText('ahoi!');
-          }
-        });
+        // firepad.on('ready', function() {
+        //   if (firepad.isHistoryEmpty()) {
+        //     firepad.setText('ahoi!');
+        //   }
+        // });
       },
 
       ready: function () {
         this.ref = this.$.fb.ref;
+        this.getValue = function () {
+          return this.firepad.getValue();
+        }
       }
 
     });
