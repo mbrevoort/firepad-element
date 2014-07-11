@@ -1,0 +1,72 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../firebase-element/firebase-element.html">
+<link rel="import" href="../ace-element/ace-element.html">
+
+<!--
+Element providing basic wrapper around firepad, markdown hardcoded.
+
+##### Example
+
+    <firepad-element></firepad-element>
+
+@element firepad-element
+@blurb Element providing basic wrapper around firepad, markdown hardcoded
+@status alpha
+@homepage http://polymerlabs.github.io/firepad-element
+-->
+<polymer-element name="firepad-element" attributes="location userId readonly">
+
+  <template>
+    <firebase-element id="fb" location="{{location}}" log></firebase-element>
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="/firepad/dist/firepad.css" />
+    <link rel="stylesheet" href="firepad-element.css" />
+    <div id="editor"></div>
+
+  </template>
+  <script src="codemirror/lib/codemirror.js"></script>
+  <script src="codemirror/mode/markdown/markdown.js"></script>
+
+  <script type="text/javascript" src="/firepad/dist/firepad.js"></script>
+  <script>
+
+    Polymer('firepad-element', {
+      /**
+       * The `author` attribute sets an initial author
+       *
+       * @attribute author
+       * @type string
+       */
+      author: 'Mike Brevoort',
+
+      domReady: function() {
+        var codeMirror = CodeMirror(this.$.editor, {
+          mode: 'markdown',
+          lineWrapping: true,
+          readOnly: (this.readonly !== null) ? 'nocursor': false
+        });
+
+        var tmpUserId = Math.floor(Math.random() * 9999999999).toString();
+        var options = {
+          userId: this.userId || tmpUserId
+        };
+
+        var firepad = Firepad.fromCodeMirror(this.$.fb.ref, codeMirror, options);
+        console.log(firepad);
+
+        firepad.on('ready', function() {
+          if (firepad.isHistoryEmpty()) {
+            firepad.setText('ahoi!');
+          }
+        });
+      },
+
+      ready: function () {
+        this.ref = this.$.fb.ref;
+      }
+
+    });
+
+  </script>
+
+</polymer-element>
