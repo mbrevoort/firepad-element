@@ -22,7 +22,7 @@ Element providing basic wrapper around firepad collaborative editor
   <script type="text/javascript" src="../firepad/dist/firepad.js"></script>
 
   <template>
-    <script src="codemirror/mode/{{mode}}/{{mode}}.js"></script>
+    <script src="{{resolvePath('codemirror/mode/' + mode + '/' + mode + '.js')}}"></script>
     <firebase-element id="fb" location="{{location}}" log></firebase-element>
     <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
     <link rel="stylesheet" href="../firepad/dist/firepad.css" />
