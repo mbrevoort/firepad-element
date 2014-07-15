@@ -16,6 +16,7 @@
     "polymer": "Polymer/polymer#~0.3.3",
     "polymer-test-tools": "Polymer/polymer-test-tools#~0.3.3",
     "firebase-element": "https://github.com/Polymer/firebase-element.git",
-    "ace-element": "PolymerLabs/ace-element#master"
+    "ace-element": "PolymerLabs/ace-element#master",
+    "firepad": "firebase/firepad#~0.1.4"
   }
 }
