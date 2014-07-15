@@ -3,64 +3,169 @@
 <link rel="import" href="../ace-element/ace-element.html">
 
 <!--
-Element providing basic wrapper around firepad, markdown hardcoded.
+Element providing basic wrapper around firepad collaborative editor
 
 ##### Example
 
-    <firepad-element></firepad-element>
+    <firepad-element
+        location="https://resplendent-fire-1806.firebaseio.com/default"
+        font="monaco"
+        linewrapping></firepad-element>
 
 @element firepad-element
-@blurb Element providing basic wrapper around firepad, markdown hardcoded
+@blurb Element providing basic wrapper around firepad collaborative editor
 @status alpha
-@homepage http://polymerlabs.github.io/firepad-element
+@homepage http://mbrevoort.github.com/firepad-element/
 -->
-<polymer-element name="firepad-element" attributes="location userId readonly firepad">
+<polymer-element name="firepad-element" attributes="location userid readonly font mode linewrapping linenumbers">
+  <script src="codemirror/lib/codemirror.js"></script>
+  <script type="text/javascript" src="/firepad/dist/firepad.js"></script>
 
   <template>
+    <script src="codemirror/mode/{{mode}}/{{mode}}.js"></script>
     <firebase-element id="fb" location="{{location}}" log></firebase-element>
     <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
     <link rel="stylesheet" href="/firepad/dist/firepad.css" />
     <link rel="stylesheet" href="firepad-element.css" />
+    <style>
+    .CodeMirror {
+      font-family: {{font}}
+    }
+    </style>
     <div id="editor"></div>
   </template>
-  <script src="codemirror/lib/codemirror.js"></script>
-  <script src="codemirror/mode/markdown/markdown.js"></script>
-
-  <script type="text/javascript" src="/firepad/dist/firepad.js"></script>
   <script>
 
     Polymer('firepad-element', {
+
       /**
-       * The `author` attribute sets an initial author
+       * The firebase location URL including a path. For example:
+       * `https://resplendent-fire-1806.firebaseio.com/docs/foo`
        *
-       * @attribute author
+       * @attribute location
        * @type string
        */
-      author: 'Mike Brevoort',
+      location: 'https://resplendent-fire-1806.firebaseio.com/default',
 
+      /**
+       * The user Id to associate with the firepad session. Default is to
+       * to randomly generate an user Id
+       *
+       * @attribute userid
+       * @type string
+       */
+      userid: Math.floor(Math.random() * 9999999999).toString(),
+
+      /**
+       * The `mode` attribute sets the CodeMirror mode. e.g. `javascript`,
+       * `markdown`, `css`, `groovy`, etc. See
+       * [CodeMirror docs](http://codemirror.net/mode/) for more info.
+       *
+       * @attribute mode
+       * @type string
+       */
+      mode: 'markdown',
+
+      /**
+       * Override the font that CodeMirror uses for the editor
+       *
+       * @attribute font
+       * @type string
+       */
+      font: 'monospace',
+
+      /**
+       * Sets the CodeMirror lineWrapping mode. Default behavior is no line
+       * wrapping. Line wrapping if attribute is present, for example:
+       *
+       *     <firepad-element linewrapping></firepad-element>
+       *
+       * @attribute linewrapping
+       * @type boolean
+       */
+      linewrapping: false,
+
+      /**
+       * Should the editor be loaded read-only. If so this instance will not be
+       * editable but will show realtime updates if the location is being edited
+       * elsewhere
+       *
+       *     <firepad-element readonly></firepad-element>
+       *
+       * @attribute readonly
+       * @type boolean
+       */
+      readonly: false,
+
+      /**
+       * Show line numbers? Default `false`
+       *
+       *     <firepad-element linenumbers></firepad-element>
+       *
+       * @attribute linenumbers
+       * @type boolean
+       */
+      linenumbers: false,
+
+      /**
+       * Current value of the editor
+       *
+       * @property value
+       * @type string
+       */
       get value() {
         return this.firepad.getText();
       },
 
       domReady: function() {
-        var codeMirror = CodeMirror(this.$.editor, {
-          mode: 'markdown',
-          lineWrapping: true,
-          readOnly: (this.readonly !== null) ? 'nocursor': false
-        });
+        var self = this;
 
-        var tmpUserId = Math.floor(Math.random() * 9999999999).toString();
-        var options = {
-          userId: this.userId || tmpUserId
-        };
+        // oh woah is me
+        // since we are loading the mode JS at attach time dynamically we don't
+        // know if the mode script has actually be loaded yet, just that the DOM
+        // for the script tag has been loaded.
+        // So, we're just going to check if the modes been loaded using a timer
+        // for a max amount of time. If the max is reached, just load CodeMirror
+        // without the mode
+        var modeMax = 3000;
+        var modeInterval = 40;
+        var modeStart = Date.now();
 
-        this.firepad = Firepad.fromCodeMirror(this.$.fb.ref, codeMirror, options);
+        function isModeLoaded () {
+          var duration = Date.now() - modeStart;
 
-        // firepad.on('ready', function() {
-        //   if (firepad.isHistoryEmpty()) {
-        //     firepad.setText('ahoi!');
-        //   }
-        // });
+          if (CodeMirror.modes[self.mode] || duration > modeMax) {
+            bootstrap();
+          }
+          else {
+            setTimeout(isModeLoaded, modeInterval);
+          }
+
+        }
+
+        function bootstrap() {
+          var codeMirror = CodeMirror(self.$.editor, {
+            // CodeMirror mode from the attribute, default to Markdown
+            mode: self.mode,
+
+            // CodeMirror lineWrapping defaults to false
+            lineWrapping: (!!self.linewrapping) ? true: false,
+
+            // CodeMirror readOnly option, defaults to false
+            readOnly: (!!self.readonly) ? 'nocursor': false,
+
+            lineNumbers: self.linenumbers
+          });
+
+          var options = {
+            userId: self.userid
+          };
+
+          self.firepad = Firepad.fromCodeMirror(self.$.fb.ref, codeMirror, options);
+
+        }
+
+        isModeLoaded();
       },
 
       ready: function () {

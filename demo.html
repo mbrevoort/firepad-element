@@ -10,8 +10,18 @@
 </head>
 <body unresolved>
 
-  <firepad-element location="your firebase URL and path" userId="1"></firepad-element>
-  <firepad-element location="your firebase URL and path" readonly></firepad-element>
+  <h3> Live Editor</h3>
+  <firepad-element location="https://resplendent-fire-1806.firebaseio.com/demo"
+                   font="monaco" linewrapping linenumbers
+                   style="height: 200px;">
+  </firepad-element>
+
+
+  <h3> Read-only Mirror</h3>
+  <firepad-element location="https://resplendent-fire-1806.firebaseio.com/demo"
+                   linewrapping readonly
+                   style="height: 200px; border: 5px #DDD solid; margin-top: 10px">
+  </firepad-element>
 
 </body>
 </html>

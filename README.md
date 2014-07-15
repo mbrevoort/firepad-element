@@ -1,4 +1,4 @@
-Polymer Element providing basic wrapper around firepad, markdown style hardcoded
-================
+firepad-element
+===============
 
-More so a tinkering experiment at this point
+Polymer Element providing basic wrapper around firepad collaborative editor
