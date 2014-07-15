@@ -1,0 +1,31 @@
+{
+  "name": "firepad-element",
+  "authors": [
+    "Mike Brevoort <mike@brevoort.com>"
+  ],
+  "description": "Firepad web component",
+  "keywords": "firepad, polymer, web-components",
+  "main": "firepad-element.html",
+  "license": "MIT",
+  "homepage": "https://github.com/mbrevoort/firepad-element/",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.3.3",
+    "polymer-test-tools": "Polymer/polymer-test-tools#~0.3.3",
+    "firebase-element": "https://github.com/Polymer/firebase-element.git",
+    "ace-element": "PolymerLabs/ace-element#master",
+    "firepad": "firebase/firepad#~0.1.4"
+  },
+  "_release": "c9a165978b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "c9a165978b79a414299390af4da76b5180b44a33"
+  },
+  "_source": "git://github.com/mbrevoort/firepad-element.git",
+  "_target": "master",
+  "_originalSource": "mbrevoort/firepad-element",
+  "_direct": true
+}

@@ -1,0 +1,7 @@
+{
+  "name": "firepad-element#gh-pages",
+  "private": true,
+  "dependencies": {
+    "firepad-element": "mbrevoort/firepad-element#master"
+  }
+}

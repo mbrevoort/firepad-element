@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  width: 800px;
+  height: 600px;
+}
+
+.powered-by-firepad {
+  display: none;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+}
