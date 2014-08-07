@@ -860,7 +860,8 @@ Element providing basic wrapper around firepad collaborative editor
           }
 
           var options = {
-            userId: self.userid
+            userId: self.userid,
+            richTextShortcuts: true
           };
 
           self.firepad = Firepad.fromCodeMirror(self.$.fb.ref, codeMirror, options);
