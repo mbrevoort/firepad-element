@@ -17,7 +17,7 @@ Element providing basic wrapper around firepad collaborative editor
 @status alpha
 @homepage http://mbrevoort.github.com/firepad-element/
 -->
-<polymer-element name="firepad-element" attributes="location userid readonly font mode linewrapping linenumbers autoactivate">
+<polymer-element name="firepad-element" attributes="location userid readonly font mode linewrapping linenumbers autoactivate autofocus">
   <script src="codemirror/lib/codemirror.js"></script>
   <script type="text/javascript" src="../firepad/dist/firepad.js"></script>
 
@@ -790,7 +790,7 @@ Element providing basic wrapper around firepad collaborative editor
        * @attribute autoactivate
        * @type boolean
        */
-      autoactivate: true,
+      autoactivate: false,
 
       /**
        * Current value of the editor
@@ -850,6 +850,14 @@ Element providing basic wrapper around firepad collaborative editor
 
             lineNumbers: self.linenumbers
           });
+
+          // Having a timing issue when using autofocus on the CodeMirror
+          // This hack resolve the problem... with a heavy heart.
+          if (!!self.autofocus) {
+            setTimeout(function () {
+              codeMirror.focus();
+            }, 100);
+          }
 
           var options = {
             userId: self.userid
